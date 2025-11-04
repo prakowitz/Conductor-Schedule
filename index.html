@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Calendar</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .nav-buttons button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .nav-buttons button:hover {
+            background: #5568d3;
+        }
+        .nav-buttons button.active {
+            background: #764ba2;
+        }
+        .month-view {
+            display: none;
+        }
+        .month-view.active {
+            display: block;
+        }
+        .month-header {
+            text-align: center;
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+            background: #e0e0e0;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .day-header {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .day-cell {
+            background: white;
+            min-height: 90px;
+            padding: 8px;
+            position: relative;
+        }
+        .day-cell.empty {
+            background: #f5f5f5;
+        }
+        .day-number {
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+        .day-name {
+            color: #333;
+            font-size: 13px;
+            word-wrap: break-word;
+            line-height: 1.3;
+        }
+        .day-cell.has-name {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+        }
+        @media (max-width: 768px) {
+            .calendar-grid {
+                grid-template-columns: 1fr;
+            }
+            .day-header {
+                display: none;
+            }
+            .day-cell {
+                min-height: auto;
+                padding: 12px;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .day-number::after {
+                content: attr(data-day);
+                margin-left: 8px;
+                color: #999;
+                font-weight: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📅 Schedule Calendar</h1>
+        
+        <div class="nav-buttons">
+            <button onclick="showMonth('nov2025')" class="active">November 2025</button>
+            <button onclick="showMonth('dec2025')">December 2025</button>
+            <button onclick="showMonth('jan2026')">January 2026</button>
+            <button onclick="showMonth('feb2026')">February 2026</button>
+            <button onclick="showMonth('mar2026')">March 2026</button>
+        </div>
+
+        <div id="nov2025" class="month-view active">
+            <div class="month-header">November 2025</div>
+            <div class="calendar-grid" id="nov2025-grid"></div>
+        </div>
+
+        <div id="dec2025" class="month-view">
+            <div class="month-header">December 2025</div>
+            <div class="calendar-grid" id="dec2025-grid"></div>
+        </div>
+
+        <div id="jan2026" class="month-view">
+            <div class="month-header">January 2026</div>
+            <div class="calendar-grid" id="jan2026-grid"></div>
+        </div>
+
+        <div id="feb2026" class="month-view">
+            <div class="month-header">February 2026</div>
+            <div class="calendar-grid" id="feb2026-grid"></div>
+        </div>
+
+        <div id="mar2026" class="month-view">
+            <div class="month-header">March 2026</div>
+            <div class="calendar-grid" id="mar2026-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const scheduleData = {
+            nov2025: {
+                4: "Malice", 5: "TopherPapi", 6: "Pwr12", 7: "Fort Irie", 8: "ATOMICNEWB",
+                9: "Neva shook", 10: "Fort Getty", 11: "Final X2pher", 12: "86Duck",
+                13: "KRAZYDOG", 14: "Queen Eve", 15: "Gunnernoob", 16: "124DEEBO",
+                17: "Hazels Heros", 18: "RLollar", 19: "Ducksfortress17", 20: "Malice",
+                21: "TopherPapi", 22: "killav12", 23: "Ed Winchester", 24: "BigMamaKris",
+                25: "Pwr12", 26: "Fort Irie", 27: "Final X2pher", 28: "86Duck",
+                29: "Jjkicker", 30: "alchemist of loli"
+            },
+            dec2025: {
+                1: "We Ride At Dawn", 2: "KRAZYDOG", 3: "Queen Eve", 4: "RLollar",
+                5: "Ducksfortress17", 6: "General Milktoast", 7: "Desert Falcon Gunna",
+                8: "emma fröst", 9: "Malice", 10: "TopherPapi", 11: "Pwr12",
+                12: "Fort Irie", 13: "Phat Panda", 14: "Whythis Irbbliss", 15: "Snegur",
+                16: "Final X2pher", 17: "86Duck", 18: "KRAZYDOG", 19: "Queen Eve",
+                20: "Buluc Chabtan", 21: "ISMR96", 22: "HueuPKnew", 23: "RLollar",
+                24: "Ducksfortress17", 25: "Malice", 26: "TopherPapi", 27: "HodgePodgeWes",
+                28: "Gerry2482", 29: "ChemicalRose", 30: "Pwr12", 31: "Fort Irie"
+            },
+            jan2026: {
+                1: "Final X2pher", 2: "86Duck", 3: "Lurchadam", 4: "Valiant162",
+                5: "Xaropinhos", 6: "KRAZYDOG", 7: "Queen Eve", 8: "RLollar",
+                9: "Ducksfortress17", 10: "HealthDH", 11: "peace paws", 12: "Badusi destroyer",
+                13: "Malice", 14: "TopherPapi", 15: "Pwr12", 16: "Fort Irie",
+                17: "The prototype", 18: "Venom8990", 19: "Molly Bleue", 20: "Final X2pher",
+                21: "86Duck", 22: "KRAZYDOG", 23: "Queen Eve", 24: "Boooger Sugar",
+                25: "Valerey", 26: "ThaGreenest420", 27: "RLollar", 28: "Ducksfortress17",
+                29: "Malice", 30: "TopherPapi", 31: "Outbounder"
+            },
+            feb2026: {
+                1: "YumUmm", 2: "Ateez Dad", 3: "Pwr12", 4: "Fort Irie",
+                5: "Final X2pher", 6: "86Duck", 7: "Dilly hotpot", 8: "Masecap",
+                9: "TheJelly", 10: "KRAZYDOG", 11: "Queen Eve", 12: "RLollar",
+                13: "Ducksfortress17", 14: "CaniPetDATDoggg", 15: "Aceboogie941",
+                16: "BrasilUDI", 17: "Malice", 18: "TopherPapi", 19: "Pwr12",
+                20: "Fort Irie", 21: "Salsa pirate", 22: "XxSolidSpacexX", 23: "Herathok",
+                24: "Final X2pher", 25: "86Duck", 26: "KRAZYDOG", 27: "Queen Eve",
+                28: "LeSigmaChad"
+            },
+            mar2026: {
+                1: "Melkisuhdek", 2: "Dyenifer", 3: "RLollar", 4: "Ducksfortress17",
+                5: "Malice", 6: "TopherPapi", 7: "TheBurnDog", 8: "Friends1102",
+                9: "Friends1102×2", 10: "Pwr12", 11: "Fort Irie", 12: "Final X2pher",
+                13: "86Duck", 14: "DK24811", 15: "Boyarte"
+            }
+        };
+
+        const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const monthData = [
+            { id: 'nov2025', year: 2025, month: 10, days: 30, startDay: 6 },
+            { id: 'dec2025', year: 2025, month: 11, days: 31, startDay: 1 },
+            { id: 'jan2026', year: 2026, month: 0, days: 31, startDay: 4 },
+            { id: 'feb2026', year: 2026, month: 1, days: 28, startDay: 0 },
+            { id: 'mar2026', year: 2026, month: 2, days: 31, startDay: 0 }
+        ];
+
+        function createCalendar(monthInfo) {
+            const grid = document.getElementById(monthInfo.id + '-grid');
+            
+            daysOfWeek.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            for (let i = 0; i < monthInfo.startDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'day-cell empty';
+                grid.appendChild(emptyCell);
+            }
+
+            for (let day = 1; day <= monthInfo.days; day++) {
+                const cell = document.createElement('div');
+                const scheduledName = scheduleData[monthInfo.id][day];
+                
+                cell.className = scheduledName ? 'day-cell has-name' : 'day-cell';
+                
+                const dayNum = document.createElement('div');
+                dayNum.className = 'day-number';
+                dayNum.textContent = day;
+                const date = new Date(monthInfo.year, monthInfo.month, day);
+                dayNum.setAttribute('data-day', daysOfWeek[date.getDay()]);
+                
+                cell.appendChild(dayNum);
+                
+                if (scheduledName) {
+                    const name = document.createElement('div');
+                    name.className = 'day-name';
+                    name.textContent = scheduledName;
+                    cell.appendChild(name);
+                }
+                
+                grid.appendChild(cell);
+            }
+        }
+
+        monthData.forEach(month => createCalendar(month));
+
+        function showMonth(monthId) {
+            document.querySelectorAll('.month-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(monthId).classList.add('active');
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
